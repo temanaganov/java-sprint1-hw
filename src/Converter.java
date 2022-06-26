@@ -1,15 +1,14 @@
 public class Converter {
-    double convertStepsToKilometers(int steps) {
-        double stepLength = 0.75;
-        double kilometerLength = 1000;
+    final double STEP_LENGTH = 0.75;
+    final double KILOMETER_LENGTH = 1000;
+    final int CALORIES_STEP = 50;
+    final double CALORIES_IN_KILOCALORIES = 1000;
 
-        return steps * stepLength / kilometerLength;
+    double convertStepsToKilometers(int steps) {
+        return steps * STEP_LENGTH / KILOMETER_LENGTH;
     }
 
     double convertStepsToKilocalories(int steps) {
-        int caloriesInStep = 50;
-        double caloriesInKilocalories = 1000;
-
-        return steps * caloriesInStep / caloriesInKilocalories;
+        return steps * CALORIES_STEP / CALORIES_IN_KILOCALORIES;
     }
 }

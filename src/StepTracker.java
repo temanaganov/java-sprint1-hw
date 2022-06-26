@@ -1,36 +1,67 @@
 public class StepTracker {
     Converter converter;
-    int[][] allSteps;
+    MonthData[] monthData;
     int aim;
 
     StepTracker() {
-        allSteps = new int[12][30];
+        monthData = new MonthData[12];
         aim = 10_000;
         converter = new Converter();
+
+        for (int i = 0; i < monthData.length; i++) {
+            monthData[i] = new MonthData();
+        }
     }
 
     void saveSteps(int month, int day, int steps) {
-        allSteps[month][day] += steps;
-
+        monthData[month].setDaySteps(day, steps);
     }
 
-    void getStatistics(int month) {
-        int stepsSum = 0;
-        int stepsMax = 0;
+    void getAllDaysStatistics(int month) {
+        for (int i = 0; i < monthData[month].getDays().length; i++) {
+            System.out.println((i + 1) + " день: " + monthData[month].getDaySteps(i));
+        }
+    }
+
+    void getSumOfStepsPerMonth(int month) {
+        int sum = monthData[month].getSumOfSteps();
+        System.out.println("Общее кол-во шагов за месяц: " + sum);
+    }
+
+    void getMaxOfStepsPerMonth(int month) {
+        int max = 0;
+
+        for (int i = 0; i < monthData[month].getDays().length; i++) {
+            if (monthData[month].getDaySteps(i) > max) {
+                max = monthData[month].getDaySteps(i);
+            }
+        }
+
+        System.out.println("Максимальное кол-во шагов за месяц: " + max);
+    }
+
+    void getAverageStepsPerMonth(int month) {
+        int sum = monthData[month].getSumOfSteps();
+        int days = monthData[month].getDays().length;
+        System.out.println("Среднее кол-во шагов за месяц: " + (sum / days));
+    }
+
+    void getDistance(int month) {
+        int sum = monthData[month].getSumOfSteps();
+        System.out.println("Пройденная дистанция: " + converter.convertStepsToKilometers(sum) + " км");
+    }
+
+    void getKilocalories(int month) {
+        int sum = monthData[month].getSumOfSteps();
+        System.out.println("Кол-во сожженных килокалорий: " + converter.convertStepsToKilocalories(sum) + " ккал");
+    }
+
+    void getBestSeries(int month) {
         int bestSeries = 0;
         int bestSeriesTerm = 0;
 
-        for (int i = 0; i < allSteps[month].length; i++) {
-            // Считаем общую сумму шагов
-            stepsSum += allSteps[month][i];
-
-            // Находим максимальное кол-во шагов
-            if (allSteps[month][i] > stepsMax) {
-                stepsMax = allSteps[month][i];
-            }
-
-            // Считаем лучшую серию дней
-            if (allSteps[month][i] >= aim) {
+        for (int i = 0; i < monthData[month].getDays().length; i++) {
+            if (monthData[month].getDaySteps(i) >= aim) {
                 bestSeriesTerm++;
             } else {
                 if (bestSeriesTerm > bestSeries) {
@@ -38,24 +69,57 @@ public class StepTracker {
                 }
                 bestSeriesTerm = 0;
             }
-
-            System.out.println((i + 1) + " день: " + allSteps[month][i]);
         }
 
         if (bestSeriesTerm > bestSeries) {
             bestSeries = bestSeriesTerm;
         }
 
-        System.out.println("Общее кол-во шагов за месяц: " + stepsSum);
-        System.out.println("Максимальное кол-во шагов за месяц: " + stepsMax);
-        System.out.println("Среднее кол-во шагов за месяц: " + (stepsSum / 30));
-        System.out.println("Пройденная дистанция: " + converter.convertStepsToKilometers(stepsSum) + " км");
-        System.out.println("Кол-во сожженных килокалорий: " + converter.convertStepsToKilocalories(stepsSum) + " ккал");
         System.out.println("Лучшая серия: " + bestSeries + " дней\n");
     }
 
     void changeAim(int newAim) {
         aim = newAim;
         System.out.println("Цель успешно изменена\n");
+    }
+
+    void getStatistics(int month) {
+        getAllDaysStatistics(month);
+        getSumOfStepsPerMonth(month);
+        getMaxOfStepsPerMonth(month);
+        getAverageStepsPerMonth(month);
+        getDistance(month);
+        getKilocalories(month);
+        getBestSeries(month);
+    }
+
+    class MonthData {
+        int[] days;
+
+        MonthData() {
+            days = new int[30];
+        }
+
+        int[] getDays() {
+            return days;
+        }
+
+        int getDaySteps(int day) {
+            return days[day];
+        }
+
+        void setDaySteps(int day, int steps) {
+            days[day] = steps;
+        }
+
+        int getSumOfSteps() {
+            int sum = 0;
+
+            for (int i = 0; i < days.length; i++) {
+                sum += days[i];
+            }
+
+            return sum;
+        }
     }
 }
